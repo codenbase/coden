@@ -6,8 +6,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/hashicorp/consul/api"
 	"github.com/codenbase/coden/logger"
+	"github.com/hashicorp/consul/api"
 )
 
 // ConsulLocker is a structure that implements distributed locking using Consul.
@@ -57,7 +57,7 @@ func (l *ConsulLocker) Lock(ctx context.Context) error {
 
 	// Create a new session for the lock with a TTL
 	session := &api.SessionEntry{
-		TTL:      fmt.Sprintf("%s", l.lockTimeout),
+		TTL:      l.lockTimeout.String(),
 		Behavior: api.SessionBehaviorRelease,
 	}
 
