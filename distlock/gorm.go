@@ -42,10 +42,6 @@ var _ Locker = (*GORMLocker)(nil)
 func NewGORMLocker(db *gorm.DB, opts ...Option) (*GORMLocker, error) {
 	o := ApplyOptions(opts...)
 
-	if err := db.AutoMigrate(&Lock{}); err != nil {
-		return nil, err
-	}
-
 	locker := &GORMLocker{
 		db:          db,
 		ownerID:     o.ownerID,
@@ -53,6 +49,11 @@ func NewGORMLocker(db *gorm.DB, opts ...Option) (*GORMLocker, error) {
 		lockTimeout: o.lockTimeout,
 		stopChan:    make(chan struct{}),
 		logger:      o.logger,
+	}
+
+	if err := db.AutoMigrate(&Lock{}); err != nil {
+		locker.logger.Error("failed to auto migrate for Lock", "err", err)
+		return nil, err
 	}
 
 	locker.logger.Info("GORMLocker initialized", "lockName", locker.lockName, "ownerID", locker.ownerID)

@@ -12,6 +12,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 
 	"github.com/codenbase/coden/distlock"
+	"github.com/codenbase/coden/logger/coden"
 	stringsutil "github.com/codenbase/coden/util/strings"
 	"github.com/codenbase/coden/watch/initializer"
 	"github.com/codenbase/coden/watch/logger/empty"
@@ -141,6 +142,7 @@ func (w *Watch) Start(stopCh <-chan struct{}) {
 	opts := []distlock.Option{
 		distlock.WithLockTimeout(defaultExpiration),
 		distlock.WithLockName(w.lockName),
+		distlock.WithLogger(coden.NewLogger()),
 	}
 	w.locker, _ = distlock.NewGORMLocker(w.db, opts...)
 	ticker := time.NewTicker(defaultExpiration + (5 * time.Second))
