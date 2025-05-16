@@ -28,7 +28,7 @@ type GORMLocker struct {
 // Lock represents a database record for a distributed lock.
 type Lock struct {
 	ID        uint   `gorm:"primarykey"`
-	Name      string `gorm:"unique"`
+	Name      string `gorm:"uniqueIndex"`
 	OwnerID   string
 	ExpiredAt time.Time
 	CreatedAt time.Time
