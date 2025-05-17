@@ -12,7 +12,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 
 	"github.com/codenbase/coden/distlock"
-	"github.com/codenbase/coden/logger/coden"
+	"github.com/codenbase/coden/logger/base"
 	stringsutil "github.com/codenbase/coden/util/strings"
 	"github.com/codenbase/coden/watch/initializer"
 	"github.com/codenbase/coden/watch/logger/empty"
@@ -72,6 +72,8 @@ func WithLogger(logger Logger) Option {
 // NewWatch creates a new Watch monitoring system with the provided options.
 func NewWatch(opts *Options, db *gorm.DB, withOptions ...Option) (*Watch, error) {
 	logger := empty.NewLogger()
+
+	fmt.Println("测试==========")
 
 	// Create a new Watch with default settings.
 	w := &Watch{
@@ -142,7 +144,7 @@ func (w *Watch) Start(stopCh <-chan struct{}) {
 	opts := []distlock.Option{
 		distlock.WithLockTimeout(defaultExpiration),
 		distlock.WithLockName(w.lockName),
-		distlock.WithLogger(coden.NewLogger()),
+		distlock.WithLogger(base.NewLogger()),
 	}
 	w.locker, _ = distlock.NewGORMLocker(w.db, opts...)
 	ticker := time.NewTicker(defaultExpiration + (5 * time.Second))
