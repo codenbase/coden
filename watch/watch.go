@@ -73,8 +73,6 @@ func WithLogger(logger Logger) Option {
 func NewWatch(opts *Options, db *gorm.DB, withOptions ...Option) (*Watch, error) {
 	logger := empty.NewLogger()
 
-	fmt.Println("测试==========")
-
 	// Create a new Watch with default settings.
 	w := &Watch{
 		lockName:        opts.LockName,
