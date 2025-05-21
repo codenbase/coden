@@ -10,6 +10,8 @@ import (
 const (
 	// defaultLimit defines the default limit for pagination.
 	defaultLimit = -1
+	// defaultOrder defines the default order for list.
+	defaultOrder = "id desc"
 )
 
 // Tenant represents a tenant with a key and a function to retrieve its value.
@@ -46,6 +48,9 @@ type Options struct {
 	// Limit defines the maximum number of results to return.
 	// +optional
 	Limit int `json:"limit"`
+	// Order defines the order for list.
+	// +optional
+	Order string `json:"order"`
 	// Filters contains key-value pairs for filtering records.
 	Filters map[any]any
 	// Clauses contains custom clauses to be appended to the query.
@@ -74,6 +79,16 @@ func WithLimit(limit int64) Option {
 			limit = defaultLimit
 		}
 		whr.Limit = int(limit)
+	}
+}
+
+// WithLimit initializes the Limit field in Options with the given limit value.
+func WithOrder(order string) Option {
+	return func(whr *Options) {
+		if order == "" {
+			order = defaultOrder
+		}
+		whr.Order = order
 	}
 }
 
@@ -150,6 +165,15 @@ func (whr *Options) L(limit int) *Options {
 	return whr
 }
 
+// R sets the order for the query.
+func (whr *Options) R(order string) *Options {
+	if order == "" {
+		order = defaultOrder // Ensure defaultOrder is defined elsewhere
+	}
+	whr.Order = order
+	return whr
+}
+
 // P sets the pagination based on the page number and page size.
 func (whr *Options) P(page int, pageSize int) *Options {
 	if page < 1 {
@@ -206,7 +230,7 @@ func (whr *Options) Where(db *gorm.DB) *gorm.DB {
 		conds := db.Statement.BuildCondition(query.Query, query.Args...)
 		whr.Clauses = append(whr.Clauses, conds...)
 	}
-	return db.Where(whr.Filters).Clauses(whr.Clauses...).Offset(whr.Offset).Limit(whr.Limit)
+	return db.Where(whr.Filters).Clauses(whr.Clauses...).Offset(whr.Offset).Limit(whr.Limit).Order(whr.Order)
 }
 
 // O is a convenience function to create a new Options with offset.
@@ -217,6 +241,11 @@ func O(offset int) *Options {
 // L is a convenience function to create a new Options with limit.
 func L(limit int) *Options {
 	return NewWhere().L(limit)
+}
+
+// R is a convenience function to create a new Options with order.
+func R(order string) *Options {
+	return NewWhere().R(order)
 }
 
 // P is a convenience function to create a new Options with page number and page size.
