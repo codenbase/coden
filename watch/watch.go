@@ -188,11 +188,10 @@ func (w *Watch) serveHealthz() {
 
 	address := fmt.Sprintf("0.0.0.0:%d", w.healthzPort)
 
+	w.logger.Info("Successfully started health check server", "address", address, "path", "/healthz")
 	if err := http.ListenAndServe(address, r); err != nil {
 		w.logger.Error(err, "Error serving health check endpoint")
 	}
-
-	w.logger.Info("Successfully started health check server", "address", address)
 }
 
 // healthzHandler handles the health check requests for the service.
