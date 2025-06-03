@@ -33,8 +33,8 @@ func NewJWTOptions() *JWTOptions {
 func (s *JWTOptions) Validate() []error {
 	var errs []error
 
-	if !govalidator.StringLength(s.Key, "6", "32") {
-		errs = append(errs, fmt.Errorf("--jwt.key must larger than 5 and little than 33"))
+	if !govalidator.StringLength(s.Key, "6", "64") {
+		errs = append(errs, fmt.Errorf("--jwt.key must larger than 5 and little than 65"))
 	}
 
 	return errs
